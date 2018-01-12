@@ -1,5 +1,5 @@
 {
-  "name": "taf-express-webpack-react",
+  "name": "@taf/taf-express-webpack-react",
   "version": "1.0.0",
   "description": "express server with taf-node-pack(backend) and webpack and react(frontend) config files",
   "main": "index.js",

@@ -5,8 +5,8 @@ const fs = require('fs');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin;
-const outputPath = path.resolve(__dirname, '../release');
-const CDN_HOST = '//cdn.upchina.com/<%=CDN_BUSSINESS_NAME%>';
+const outputPath = path.join(__dirname, 'release');
+const CDN_HOST = '//cdn.upchina.com/YunXuanGu/';
 
 module.exports = {
   entry: {
@@ -14,6 +14,8 @@ module.exports = {
   },
   output: {
     filename: 'js/[name].[chunkhash].js',
+    // chunkFilename: 'js/[name].[chunkhash].js',
+    publicPath: process.env.NODE_ENV === 'production' ? CDN_HOST : `/release/`,
     path: outputPath
   },
   module: {
@@ -26,14 +28,15 @@ module.exports = {
       {
         test: /\.css$/,
         use: ExtractTextPlugin.extract({
-          use: 'css-loader'
+          fallback: 'style-loader',
+          use: [{ loader: 'css-loader', options: { minimize: true } }]
         })
       },
       {
         test: /\.(jpe?g|png|gif|svg)$/i,
         loader: 'url-loader',
         options: {
-          limit: 10000, // 10kb
+          limit: 10000,
           publicPath:
             process.env.NODE_ENV === 'production' ? CDN_HOST : `/release/`,
           outputPath: 'images/'
@@ -44,11 +47,14 @@ module.exports = {
   plugins: [
     // 定义客户端环境变量调试用
     new webpack.DefinePlugin({
-      IN_APP: JSON.stringify(true),
-      'process.env.NODE_ENV': '"production"'
+      IN_APP: 'true',
+      'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`
     }),
     // 提取所有css引用到单个文件
-    new ExtractTextPlugin('css/[name].[contenthash].css'),
+    new ExtractTextPlugin({
+      filename: 'css/[name].[contenthash].css',
+      allChunks: true
+    }),
     // 忽略momentjs的国际化相关资源文件
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     // 提取node_modules中的引用到单独的公共文件中，命名为vendor
@@ -75,12 +81,10 @@ module.exports = {
       }
     })
     // 运行分析服务，分析优化时使用
-    /*
-    new BundleAnalyzerPlugin({
-      analyzerMode: 'server',
-      analyzerHost: '127.0.0.1',
-      analyzerPort: 7788
-    })
-    */
+    // new BundleAnalyzerPlugin({
+    //   analyzerMode: 'server',
+    //   analyzerHost: '127.0.0.1',
+    //   analyzerPort: 7788
+    // })
   ]
 };

@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin;
+const outputPath = path.resolve(__dirname, 'release/js');
 
 module.exports = {
   devtool: 'inline-source-map',
@@ -10,6 +11,7 @@ module.exports = {
   },
   output: {
     filename: '[name].js',
+    path: outputPath,
     publicPath: '/assets',
     chunkFilename: '[id].chunk.js',
     sourceMapFilename: '[file].map'
@@ -37,9 +39,7 @@ module.exports = {
         test: /\.(jpe?g|png|gif|svg)$/i,
         loader: 'url-loader',
         options: {
-          limit: 10000, // 10KB
-          name: '[path][name].[ext]',
-          publicPath: `/assets/`
+          limit: 10000 // 10kb
         }
       }
     ]
