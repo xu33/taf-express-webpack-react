@@ -3,6 +3,7 @@ const ManifestPlugin = require('webpack-manifest-plugin');
 const path = require('path');
 const fs = require('fs');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin;
 const outputPath = path.join(__dirname, 'release');
@@ -45,6 +46,7 @@ module.exports = {
     ]
   },
   plugins: [
+    new CleanWebpackPlugin(['release']),
     // 定义客户端环境变量调试用
     new webpack.DefinePlugin({
       IN_APP: 'true',
